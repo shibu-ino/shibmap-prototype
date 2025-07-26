@@ -1,0 +1,14 @@
+[
+  {
+    "coords": [34.9671, 135.7727],
+    "title": "伏見稲荷大社（京都）",
+    "image": "photos/kyoto.jpeg",
+    "link": "https://example.com/kyoto"
+  },
+  {
+    "coords": [43.0667, 141.3500],
+    "title": "札幌時計台（北海道）",
+    "image": "photos/sapporo.jpeg",
+    "link": "https://example.com/sapporo"
+  }
+]

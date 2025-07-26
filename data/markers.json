@@ -1,0 +1,274 @@
+[
+  {
+    "coords": [35.1679, 136.9074],
+    "title": "酒亭 田なか",
+    "image": "https://images.unsplash.com/photo-1600891964599-f61ba0e24092?w=600&auto=format&fit=crop&q=70",
+    "link": "https://maps.google.com/?q=栄",
+    "tags": ["和食","古民家","静か"],
+    "note": "古民家を改装したしっとり系。照明が低く会話が落ち着く。"
+  },
+  {
+    "coords": [35.1694, 136.9052],
+    "title": "ビストロ・エスプリ",
+    "image": "https://images.unsplash.com/photo-1529692236671-f1dc28b14e18?w=600&auto=format&fit=crop&q=70",
+    "link": "https://maps.google.com/?q=錦",
+    "tags": ["ビストロ","ワイン","隠れ家"],
+    "note": "2階の隠れ家ビストロ。小皿とグラスワインの回転が心地よい。"
+  },
+  {
+    "coords": [35.1722, 136.9120],
+    "title": "BAR 日暮れ時",
+    "image": "https://images.unsplash.com/photo-1544148103-0773bf10d330?w=600&auto=format&fit=crop&q=70",
+    "link": "https://maps.google.com/?q=泉",
+    "tags": ["バー","ジャズ","静寂"],
+    "note": "アンティーク調の内装とジャズ。グラスの余韻を味わうバー。"
+  },
+  {
+    "coords": [35.1671, 136.9080],
+    "title": "BAR AZ",
+    "image": "https://images.unsplash.com/photo-1521017432531-fbd92d768814?w=600&auto=format&fit=crop&q=70",
+    "link": "https://maps.google.com/?q=栄",
+    "tags": ["バー","隠れ家","薄暗い"],
+    "note": "小さな扉を抜けると別世界。会話に集中できるサイズ感。"
+  },
+  {
+    "coords": [35.1676, 136.9089],
+    "title": "THEATER",
+    "image": "https://images.unsplash.com/photo-1601314167099-d3617324c1e3?w=600&auto=format&fit=crop&q=70",
+    "link": "https://maps.google.com/?q=栄",
+    "tags": ["バー","ソファ","コンセプト"],
+    "note": "劇場的演出の薄暗さとソファ。緩やかな時間が流れる。"
+  },
+  {
+    "coords": [35.1688, 136.9105],
+    "title": "Shot Bar Penrose",
+    "image": "https://images.unsplash.com/photo-1601924994987-69e26d50dc26?w=600&auto=format&fit=crop&q=70",
+    "link": "https://maps.google.com/?q=栄",
+    "tags": ["バー","ウイスキー","カウンター"],
+    "note": "ボトル背面の琥珀色が映える直線的カウンター。"
+  },
+  {
+    "coords": [35.1705, 136.9132],
+    "title": "ベルチエロ",
+    "image": "https://images.unsplash.com/photo-1551183053-bf91a1d81141?w=600&auto=format&fit=crop&q=70",
+    "link": "https://maps.google.com/?q=新栄",
+    "tags": ["イタリアン","海鮮","ワイン"],
+    "note": "魚介の扱いが丁寧な小箱イタリアン。会話を邪魔しない音量。"
+  },
+  {
+    "coords": [35.1692, 136.9095],
+    "title": "天と鮮",
+    "image": "https://images.unsplash.com/photo-1600627225432-82de37d9ad6d?w=600&auto=format&fit=crop&q=70",
+    "link": "https://maps.google.com/?q=栄",
+    "tags": ["天ぷら","日本酒","和食"],
+    "note": "揚げたて少量提供と日本酒ペアリングでテンポよく。"
+  },
+  {
+    "coords": [35.1700, 136.9098],
+    "title": "シャンタ ムール",
+    "image": "https://images.unsplash.com/photo-1600891963930-96053a927e7b?w=600&auto=format&fit=crop&q=70",
+    "link": "https://maps.google.com/?q=栄",
+    "tags": ["ダイニングバー","隠れ家","照明"],
+    "note": "低め照明とラフすぎない距離感。初回デート後半に良い。"
+  },
+  {
+    "coords": [35.1704, 136.9072],
+    "title": "フィレンツェ三丁目",
+    "image": "https://images.unsplash.com/photo-1603899123400-75b6d0d43d3e?w=600&auto=format&fit=crop&q=70",
+    "link": "https://maps.google.com/?q=栄町",
+    "tags": ["イタリアン","郷土料理","ワイン"],
+    "note": "トスカーナ色強めの素朴な皿。過度に演出しない信頼感。"
+  },
+  {
+    "coords": [35.1695, 136.8980],
+    "title": "dice",
+    "image": "https://images.unsplash.com/photo-1581404917879-736cb52a59b3?w=600&auto=format&fit=crop&q=70",
+    "link": "https://maps.google.com/?q=伏見",
+    "tags": ["バー","多種ボトル","遅い時間"],
+    "note": "ボトル数と深夜帯の静けさで二軒目以降に使いやすい。"
+  },
+  {
+    "coords": [35.1711, 136.9079],
+    "title": "糀MARUTANI",
+    "image": "https://images.unsplash.com/photo-1528698827591-e19ccd7bc23d?w=600&auto=format&fit=crop&q=70",
+    "link": "https://maps.google.com/?q=久屋大通",
+    "tags": ["和食","発酵","テラス"],
+    "note": "発酵ベースの小皿と軽い酒。胃に優しいコース外しに。"
+  },
+  {
+    "coords": [35.1682, 136.9046],
+    "title": "BAR quatte",
+    "image": "https://images.unsplash.com/photo-1532634896-26909d0d4b21?w=600&auto=format&fit=crop&q=70",
+    "link": "https://maps.google.com/?q=栄",
+    "tags": ["バー","カウンター","静か"],
+    "note": "声量を抑えたい夜に。アイスの融け方を眺める余白。"
+  },
+  {
+    "coords": [35.1669, 136.9090],
+    "title": "zuiji",
+    "image": "https://images.unsplash.com/photo-1562059390-a761a084768e?w=600&auto=format&fit=crop&q=70",
+    "link": "https://maps.google.com/?q=栄",
+    "tags": ["イタリアン","古民家","落ち着き"],
+    "note": "古材とオリーブオイルの香りが混ざる静かな箱。"
+  },
+  {
+    "coords": [35.1659, 136.9086],
+    "title": "CAFE FILL de VINCENNES",
+    "image": "https://images.unsplash.com/photo-1528698827591-e19ccd7bc23d?w=600&auto=format&fit=crop&q=70",
+    "link": "https://maps.google.com/?q=矢場町",
+    "tags": ["カフェ","薄暗い","静か"],
+    "note": "カフェからバーへ移る前の“整える”一時間を作れる。"
+  },
+  {
+    "coords": [35.1685, 136.9078],
+    "title": "dos",
+    "image": "https://images.unsplash.com/photo-1601314167099-d3617324c1e3?w=600&auto=format&fit=crop&q=70",
+    "link": "https://maps.google.com/?q=栄",
+    "tags": ["ダイニング","ソファ","ゆったり"],
+    "note": "ソファ主体で姿勢が崩せる。会話を長く引っ張れる構造。"
+  },
+  {
+    "coords": [35.1708, 136.8855],
+    "title": "倫敦塔",
+    "image": "https://images.unsplash.com/photo-1600891964599-f61ba0e24092?w=600&auto=format&fit=crop&q=70",
+    "link": "https://maps.google.com/?q=名駅",
+    "tags": ["ダイニング","個室","洋館風"],
+    "note": "洋館モチーフの半個室。少しだけ非日常を混ぜたい時。"
+  },
+  {
+    "coords": [35.1715, 136.9068],
+    "title": "JAPANESE BAR 栄",
+    "image": "https://images.unsplash.com/photo-1600627225432-82de37d9ad6d?w=600&auto=format&fit=crop&q=70",
+    "link": "https://maps.google.com/?q=栄",
+    "tags": ["日本酒","バー","常時多銘柄"],
+    "note": "回転よく銘柄が入れ替わる“試す愉しさ”型の日本酒バー。"
+  },
+  {
+    "coords": [35.1702, 136.8840],
+    "title": "TEPPAN ITALIAN GAINA",
+    "image": "https://images.unsplash.com/photo-1551183053-bf91a1d81141?w=600&auto=format&fit=crop&q=70",
+    "link": "https://maps.google.com/?q=名駅",
+    "tags": ["鉄板","イタリアン","ライブ感"],
+    "note": "鉄板の立ち上る香りで会話の“間”を作れるライブ感。"
+  },
+  {
+    "coords": [35.1704, 136.8835],
+    "title": "一鶴乃鳥",
+    "image": "https://images.unsplash.com/photo-1600891963930-96053a927e7b?w=600&auto=format&fit=crop&q=70",
+    "link": "https://maps.google.com/?q=名駅",
+    "tags": ["焼鳥","和食","日本酒"],
+    "note": "香りが強すぎない焼鳥。淡白～濃い味の序列が美しい。"
+  },
+  {
+    "coords": [35.1700, 136.8831],
+    "title": "ANG 名駅店",
+    "image": "https://images.unsplash.com/photo-1581404917879-736cb52a59b3?w=600&auto=format&fit=crop&q=70",
+    "link": "https://maps.google.com/?q=名駅",
+    "tags": ["肉","鍋","個室"],
+    "note": "寒い季節寄りの鍋・肉系。温度差で親密度を上げる場。"
+  },
+  {
+    "coords": [35.1697, 136.8828],
+    "title": "眺座",
+    "image": "https://images.unsplash.com/photo-1562059390-a761a084768e?w=600&auto=format&fit=crop&q=70",
+    "link": "https://maps.google.com/?q=名駅",
+    "tags": ["夜景","個室","和食"],
+    "note": "窓際夜景と個室感のミックス。沈黙が気まずくない。"
+  },
+  {
+    "coords": [35.1693, 136.8834],
+    "title": "箱屋",
+    "image": "https://images.unsplash.com/photo-1601924994987-69e26d50dc26?w=600&auto=format&fit=crop&q=70",
+    "link": "https://maps.google.com/?q=名駅",
+    "tags": ["しゃぶしゃぶ","個室","和食"],
+    "note": "出汁と湯気で柔らかい空気を作る。季節感の演出もしやすい。"
+  },
+  {
+    "coords": [35.1689, 136.8837],
+    "title": "和さび",
+    "image": "https://images.unsplash.com/photo-1544148103-0773bf10d330?w=600&auto=format&fit=crop&q=70",
+    "link": "https://maps.google.com/?q=名駅",
+    "tags": ["創作和食","日本酒","掘りごたつ"],
+    "note": "掘りごたつで姿勢が落ち着き会話テンポを合わせやすい。"
+  },
+  {
+    "coords": [35.1685, 136.8829],
+    "title": "焼肉 満炎",
+    "image": "https://images.unsplash.com/photo-1553163147-622ab57e7c8e?w=600&auto=format&fit=crop&q=70",
+    "link": "https://maps.google.com/?q=名駅",
+    "tags": ["焼肉","個室","スタミナ"],
+    "note": "煙控えめ排気。重すぎない部位構成で次の一軒へ接続可能。"
+  },
+  {
+    "coords": [35.1681, 136.8834],
+    "title": "牛炙",
+    "image": "https://images.unsplash.com/photo-1504674900247-0877df9cc836?w=600&auto=format&fit=crop&q=70",
+    "link": "https://maps.google.com/?q=名駅",
+    "tags": ["肉","ワイン","カウンター"],
+    "note": "焼きのライブとグラスワインの香りで五感を同期させる。"
+  },
+  {
+    "coords": [35.1679, 136.8842],
+    "title": "KOYOEN KITTE",
+    "image": "https://images.unsplash.com/photo-1603052875224-cf82df46941f?w=600&auto=format&fit=crop&q=70",
+    "link": "https://maps.google.com/?q=KITTE 名古屋",
+    "tags": ["ビール","グリル","駅直結"],
+    "note": "移動ストレスゼロの集合場所兼一次会。"
+  },
+  {
+    "coords": [35.1676, 136.8837],
+    "title": "和菜美",
+    "image": "https://images.unsplash.com/photo-1600627225532-00f14c18a669?w=600&auto=format&fit=crop&q=70",
+    "link": "https://maps.google.com/?q=名駅",
+    "tags": ["和食","海鮮","個室"],
+    "note": "海鮮主体で香りが軽く、二軒目バーへスムーズ。"
+  },
+  {
+    "coords": [35.1673, 136.8845],
+    "title": "今井屋本店",
+    "image": "https://images.unsplash.com/photo-1603052577087-24b8f12d67b8?w=600&auto=format&fit=crop&q=70",
+    "link": "https://maps.google.com/?q=名駅",
+    "tags": ["焼鳥","比内地鶏","和食"],
+    "note": "火入れの緻密さで会話の“感想共有”が自然に生まれる。"
+  },
+  {
+    "coords": [35.1713, 136.9340],
+    "title": "メサイア",
+    "image": "https://images.unsplash.com/photo-1603052577469-5f8b8b1a9542?w=600&auto=format&fit=crop&q=70",
+    "link": "https://maps.google.com/?q=新栄",
+    "tags": ["ダイニングバー","隠れ家","洗練"],
+    "note": "余白のある現代感。音圧低めで心理距離を詰めやすい。"
+  },
+  {
+    "coords": [35.1729, 136.9344],
+    "title": "静茶ラウンジ",
+    "image": "https://images.unsplash.com/photo-1544148103-0773bf10d330?w=600&auto=format&fit=crop&q=70",
+    "link": "https://maps.google.com/?q=新栄",
+    "tags": ["日本茶","バー","静寂"],
+    "note": "日本茶ベースの低アルコール。終電前のクールダウン。"
+  },
+  {
+    "coords": [35.1732, 136.9335],
+    "title": "余白コーヒー夜席",
+    "image": "https://images.unsplash.com/photo-1511920170033-f8396924c348?w=600&auto=format&fit=crop&q=70",
+    "link": "https://maps.google.com/?q=新栄",
+    "tags": ["コーヒー","夜カフェ","静か"],
+    "note": "アルコールを抑えたい夜の選択肢。物語を閉じる一杯。"
+  },
+  {
+    "coords": [35.1598, 136.9349],
+    "title": "今池和バル 柔光",
+    "image": "https://images.unsplash.com/photo-1600627225532-00f14c18a669?w=600&auto=format&fit=crop&q=70",
+    "link": "https://maps.google.com/?q=今池",
+    "tags": ["和バル","気軽","二軒目"],
+    "note": "雑踏から半歩引いた導線。合うなら次の深い店へ繋げる踏み台。"
+  },
+  {
+    "coords": [35.1605, 136.9343],
+    "title": "路地裏ワイン小屋",
+    "image": "https://images.unsplash.com/photo-1603899123400-75b6d0d43d3e?w=600&auto=format&fit=crop&q=70",
+    "link": "https://maps.google.com/?q=今池",
+    "tags": ["ワイン","路地裏","小箱"],
+    "note": "椅子距離が近く自然に視線が交わる小箱。"
+  }
+]

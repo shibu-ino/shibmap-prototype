@@ -1,0 +1,305 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+
+  <meta charset="UTF-8" />
+  <title>Sibmap</title>
+  <link rel="manifest" href="manifest.json" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <!-- Leaflet -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
+  <!--（任意）マーカークラスタ：大量件数向け-->
+  <!--
+  <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.css" />
+  <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.Default.css" />
+  <script src="https://unpkg.com/leaflet.markercluster@1.5.3/dist/leaflet.markercluster.js"></script>
+  -->
+
+  <link href="https://fonts.googleapis.com/css2?family=EB+Garamond&family=Noto+Serif+JP:wght@400;600&display=swap" rel="stylesheet" />
+
+  <style>
+    :root {
+      --bg: #f9f5eb;
+      --accent: #4B5F60;
+      --link: #2F80ED;
+    }
+    html, body {
+      margin:0; padding:0; height:100%;
+      font-family: 'Noto Serif JP','EB Garamond',serif;
+      background: var(--bg);
+    }
+    #map { height: 100vh; }
+
+    .leaflet-container {
+      background: #e9e4da;
+      outline: none;
+    }
+
+    .popup-wrap {
+      max-width: 250px;
+      font-size: 14px;
+      line-height: 1.45;
+    }
+    .popup-img {
+      width: 100%;
+      height: 140px;
+      object-fit: cover;
+      border-radius: 10px;
+      margin-bottom: 8px;
+      background: #ddd;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+    }
+    .popup-title {
+      font-weight: 600;
+      font-size: 15px;
+      color: var(--accent);
+      margin: 0 0 3px;
+    }
+    .tags {
+      margin: 4px 0 6px;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 4px;
+    }
+    .tag {
+      background: #ece5d6;
+      color: #5a5244;
+      padding: 2px 6px;
+      border-radius: 6px;
+      font-size: 11px;
+      line-height: 1.2;
+    }
+    .popup-link {
+      display:inline-block;
+      margin-top:4px;
+      color: var(--link);
+      font-weight:600;
+      text-decoration:none;
+    }
+    .popup-link:hover { text-decoration:underline; }
+
+    .custom-marker-dot {
+      width:14px; height:14px;
+      background: var(--accent);
+      border-radius:50%;
+      border:2px solid #fff;
+      box-shadow:0 0 0 1px rgba(0,0,0,0.15);
+    }
+    .custom-current-location-dot {
+      width:14px; height:14px;
+      background: #7A1F1F; /* 渋めえんじ色 */
+      border-radius:50%;
+      border:2px solid #fff;
+      box-shadow:0 0 0 1px rgba(0,0,0,0.15);
+    }
+
+    .legend {
+      position: absolute;
+      top: 60px;
+      left: 10px;
+      background: rgba(255,255,255,0.92);
+      backdrop-filter: blur(4px);
+      padding: 10px 12px;
+      border-radius: 12px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.18);
+      font-size: 12px;
+      max-width: 240px;
+    }
+    .legend h1 {
+      font-size: 15px;
+      margin:0 0 6px;
+      font-weight:600;
+      color:#333;
+    }
+    .legend p {
+      margin: 0 0 4px;
+      color:#555;
+      line-height:1.4;
+    }
+    .legend small { color:#777; font-size:11px; }
+
+    @media (max-width: 640px) {
+      .legend { font-size: 11px; }
+      .popup-wrap { max-width: 210px; }
+      .popup-img { height: 120px; }
+    }
+  </style>
+
+  <!-- PWA対応 -->
+  <script>
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => {
+        navigator.serviceWorker.register('service-worker.js')
+          .then(reg => console.log('Service Worker registered:', reg.scope))
+          .catch(err => console.error('Service Worker registration failed:', err));
+      });
+    }
+  </script>
+
+
+
+</head>
+<body>
+  <div id="map"></div>
+  <div style="position:absolute; bottom:20px; left:10px; right:10px; background:#fff; padding:10px; border-radius:10px; box-shadow:0 2px 6px rgba(0,0,0,0.2); z-index:999;">
+    <textarea id="jsonInput" rows="6" placeholder="ここにJSONデータを貼り付け" style="width:100%;"></textarea>
+    <button id="clearButton" onclick="clearMarkers()" style="margin-top:8px; margin-right:8px;">地図をクリア</button>
+    <button id="loadButton" onclick="loadCustomMarkers()" style="margin-top:8px;">地図に表示</button>
+  </div>
+
+  <script>
+    // 追加：現在のマーカーを記録
+    let currentMarkers = [];
+    // ---- 基本マップ ----
+    const map = L.map('map', {
+      minZoom: 4,
+      maxZoom: 19,
+      scrollWheelZoom: true
+    }).setView([35.170, 136.907], 14);
+
+    // ---- 現在地表示 ----
+    function showCurrentLocation() {
+      if (!navigator.geolocation) {
+        console.log("Geolocation is not supported by your browser");
+        return;
+      }
+
+      navigator.geolocation.getCurrentPosition(
+        (position) => {
+          const lat = position.coords.latitude;
+          const lng = position.coords.longitude;
+
+          const currentIcon = L.divIcon({
+            className: '',
+            html: '<div class="custom-current-location-dot"></div>',
+            iconSize: [16,16],
+            iconAnchor: [8,8],
+            popupAnchor: [0,-4]
+          });
+
+          const currentLocationMarker = L.marker([lat, lng], { icon: currentIcon })
+            .addTo(map)
+            .bindPopup("あなたの現在地");
+        },
+        (err) => {
+          console.warn(`現在地の取得に失敗: ${err.message}`);
+        }
+      );
+    }
+
+    // マップ初期化後に呼び出す
+    showCurrentLocation();
+
+    L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {
+      attribution: '&copy; OpenStreetMap contributors &copy; CartoDB'
+    }).addTo(map);
+
+    // ---- カスタムアイコン ----
+    function createIcon() {
+      return L.divIcon({
+        className: '',
+        html: '<div class="custom-marker-dot"></div>',
+        iconSize: [16,16],
+        iconAnchor: [8,8],
+        popupAnchor: [0,-4]
+      });
+    }
+
+    // ---- HTMLエスケープ ----
+    function escapeHTML(str='') {
+      return str.replace(/[&<>"']/g, s => ({
+        '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'
+      }[s]));
+    }
+
+    const FALLBACK_IMG = 'images/placeholder.jpg'; // 必要なら配置
+
+  </script>
+  <script>
+
+// 関数外にこれを追加（表示済みマーカーの記録用）
+const addedMarkerSet = new Set();
+
+function loadCustomMarkers() {
+  console.log("Loading custom markers...");
+  const input = document.getElementById('jsonInput').value;
+  try {
+    const items = JSON.parse(input);
+    console.log(items);
+    localStorage.setItem('sibmapData', input);
+
+    // 既存マーカー削除
+    currentMarkers.forEach(marker => map.removeLayer(marker));
+    currentMarkers = [];
+    addedMarkerSet.clear();
+
+    items.forEach((item, index) => {
+      if (!item.coords || item.coords.length !== 2) {
+        throw new Error(`スポット ${index + 1} にcoordsが不正です`);
+      }
+
+      const markerKey = `${item.coords[0]},${item.coords[1]}`;
+      if (addedMarkerSet.has(markerKey)) {
+        console.log("スキップ: 重複マーカー", markerKey);
+        return; // すでに追加済み
+      }
+
+      const title = escapeHTML(item.title);
+      const tags = (item.tags || []).map(t => `<span class="tag">${escapeHTML(t)}</span>`).join('');
+      const img = escapeHTML(item.image);
+      const link = escapeHTML(item.link);
+      const body = escapeHTML(item.note || '');
+
+      const popupHTML = `
+        <div class="popup-wrap">
+          <img src="${img}" alt="${title}" class="popup-img"
+               onerror="this.onerror=null;this.src='${FALLBACK_IMG}';">
+          <h2 class="popup-title">${title}</h2>
+          <div class="tags">${tags}</div>
+          <div class="desc">${body}</div>
+          <a class="popup-link" href="${link}" target="_blank" rel="noopener">詳細を開く</a>
+        </div>
+      `;
+      const marker = L.marker(item.coords, { icon: createIcon() })
+        .addTo(map)
+        .bindPopup(popupHTML);
+      currentMarkers.push(marker);
+      console.log("Marker added:", item);
+      addedMarkerSet.add(markerKey);
+    });
+  } catch (e) {
+    alert("JSONの読み込みに失敗しました: " + e.message);
+    console.error("JSON parse error:", e);
+  }
+}
+
+// 追加：地図上のマーカーと保存データを全てクリアする
+function clearMarkers() {
+  currentMarkers.forEach(marker => map.removeLayer(marker));
+  currentMarkers = [];
+  addedMarkerSet.clear();
+  localStorage.removeItem('sibmapData');
+  document.getElementById('jsonInput').value = '';
+  console.log("地図と保存データをクリアしました");
+}
+
+  window.addEventListener('load', () => {
+    const saved = localStorage.getItem('sibmapData');
+    if (saved) {
+      document.getElementById('jsonInput').value = saved;
+      loadCustomMarkers();
+    }
+  });
+
+  if ('serviceWorker' in navigator) {
+    navigator.serviceWorker.register('service-worker.js')
+      .then(reg => console.log('Service Worker registered:', reg))
+      .catch(err => console.log('Service Worker registration failed:', err));
+  }
+
+  </script>
+</body>
+</html>
