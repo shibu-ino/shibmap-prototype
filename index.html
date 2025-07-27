@@ -11,7 +11,7 @@
   <meta charset="UTF-8" />
   <title>Shibmap</title>
   <link rel="manifest" href="manifest.json" />
-  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
   <!-- Leaflet -->
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
@@ -37,7 +37,14 @@
       font-family: 'Noto Serif JP','EB Garamond',serif;
       background: var(--bg);
     }
-    #map { height: calc(var(--vh, 1vh) * 100); }
+    #map {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      height: 100vh;
+    }
 
     .leaflet-container {
       background: #e9e4da;
