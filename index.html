@@ -11,7 +11,7 @@
   <meta charset="UTF-8" />
   <title>Shibmap</title>
   <link rel="manifest" href="manifest.json" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" />
 
   <!-- Leaflet -->
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
@@ -132,13 +132,18 @@
       .popup-wrap { max-width: 210px; }
       .popup-img { height: 120px; }
       #jsonInput {
-        position: relative !important;
-        width: 100% !important;
-        margin: 10px 0 !important;
-        top: auto !important;
-        left: auto !important;
-        transform: none !important;
+        max-height: 30vh;
+        resize: vertical;
+        overflow: auto;
+        margin-bottom: 1em;
       }
+    }
+
+    #jsonInput {
+      max-height: 30vh;
+      resize: vertical;
+      overflow: auto;
+      margin-bottom: 1em;
     }
   </style>
 
@@ -339,19 +344,27 @@ function clearMarkers() {
   console.log("地図と保存データをクリアしました");
 }
 
-  window.addEventListener('load', () => {
-    const saved = localStorage.getItem('ShibmapData');
-    if (saved) {
-      document.getElementById('jsonInput').value = saved;
-      loadCustomMarkers();
-    }
-  });
-
-  if ('serviceWorker' in navigator) {
-    navigator.serviceWorker.register('service-worker.js?v=20250726')
-      .then(reg => console.log('Service Worker registered:', reg))
-      .catch(err => console.log('Service Worker registration failed:', err));
+window.addEventListener('load', () => {
+  const saved = localStorage.getItem('ShibmapData');
+  if (saved) {
+    document.getElementById('jsonInput').value = saved;
+    loadCustomMarkers();
   }
+});
+
+if ('serviceWorker' in navigator) {
+  navigator.serviceWorker.register('service-worker.js?v=20250726')
+    .then(reg => console.log('Service Worker registered:', reg))
+    .catch(err => console.log('Service Worker registration failed:', err));
+}
+
+// 新規追加：jsonInputのフォーカス時に画面をスクロールして入力欄を見やすくする
+const input = document.getElementById('jsonInput');
+input.addEventListener('focus', () => {
+  setTimeout(() => {
+    window.scrollTo(0, 0);
+  }, 300);
+});
 
   </script>
 </body>
