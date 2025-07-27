@@ -136,6 +136,8 @@
         resize: vertical;
         overflow: auto;
         margin-bottom: 1em;
+        width: 100%;
+        box-sizing: border-box;
       }
     }
 
@@ -144,6 +146,13 @@
       resize: vertical;
       overflow: auto;
       margin-bottom: 1em;
+      width: 100%;
+      box-sizing: border-box;
+    }
+
+    textarea {
+      width: 100%;
+      box-sizing: border-box;
     }
 
     /* --- inputPanel styles --- */
@@ -416,6 +425,13 @@ window.addEventListener('focusin', () => {
 });
 window.addEventListener('focusout', () => {
   document.body.classList.remove('keyboard-open');
+});
+
+// キャッシュ削除後に残る入力文字を防止（初期化）
+window.addEventListener('pageshow', (event) => {
+  if (event.persisted || (window.performance && performance.getEntriesByType("navigation")[0]?.type === "back_forward")) {
+    document.getElementById('jsonInput').value = '';
+  }
 });
 
   </script>
