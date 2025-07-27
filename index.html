@@ -148,7 +148,7 @@
 
     /* --- inputPanel styles --- */
     #inputPanel {
-      position: absolute;
+      position: fixed;
       bottom: 0;
       left: 0;
       right: 0;
@@ -159,6 +159,15 @@
       border-radius: 10px 10px 0 0;
       box-shadow: 0 -2px 6px rgba(0,0,0,0.2);
       z-index: 999;
+    }
+    @supports (env(safe-area-inset-bottom)) {
+      #inputPanel {
+        padding-bottom: calc(10px + env(safe-area-inset-bottom));
+      }
+    }
+
+    body.keyboard-open #inputPanel {
+      transform: translateY(-300px); /* キーボード高さに応じて調整可能 */
     }
     #inputPanel button {
       margin-top: 8px;
@@ -401,8 +410,13 @@ input.addEventListener('focus', () => {
   }, 300);
 });
 
-// iOS Safari対策：画面リサイズ時にmap.invalidateSize()で再描画
-// ※ map.invalidateSize() 呼び出しは --vh 設定スクリプトにより不要となったため削除
+// iOS Safari対策：キーボード表示時にbodyへクラスを付与し、inputPanelを持ち上げる
+window.addEventListener('focusin', () => {
+  document.body.classList.add('keyboard-open');
+});
+window.addEventListener('focusout', () => {
+  document.body.classList.remove('keyboard-open');
+});
 
   </script>
 </body>
