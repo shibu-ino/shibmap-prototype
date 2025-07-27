@@ -277,7 +277,7 @@
       maxZoom: 18,
       worldCopyJump: true,
       zoomSnap: 0.1
-    }).setView([34.4273, 135.244], 3);
+    }).setView([20, 10], 2);
 
     // ---- 現在地表示 ----
     function locateNow(fromUser = false) {
@@ -386,6 +386,7 @@ function loadCustomMarkers() {
     currentMarkers.forEach(marker => map.removeLayer(marker));
     currentMarkers = [];
     addedMarkerSet.clear();
+    const latlngs = [];
 
     items.forEach((item, index) => {
       // coords形式のみ対応。他の形式（lat, lng等）は非対応
@@ -421,7 +422,14 @@ function loadCustomMarkers() {
       currentMarkers.push(marker);
       console.log("Marker added:", item);
       addedMarkerSet.add(markerKey);
+      latlngs.push(item.coords);
     });
+
+    // 追加：読み込んだスポットに地図をフィット。過度なズームは抑える
+    if (latlngs.length > 0) {
+      const bounds = L.latLngBounds(latlngs);
+      map.fitBounds(bounds, { padding: [32, 32], maxZoom: 4 });
+    }
   } catch (e) {
     alert("JSONの読み込みに失敗しました: " + e.message);
     console.error("JSON parse error:", e);
@@ -443,11 +451,15 @@ window.addEventListener('load', () => {
   if (saved) {
     document.getElementById('jsonInput').value = saved;
     loadCustomMarkers();
+  } else {
+    // 初期表示は世界全体に。iPhoneでの“拡大され過ぎ”を防止
+    map.fitWorld({ padding: [16, 16] });
+    map.setZoom(2);
   }
 });
 
 if ('serviceWorker' in navigator) {
-  navigator.serviceWorker.register('service-worker.js?v=20250727a')
+  navigator.serviceWorker.register('service-worker.js?v=20250727b')
     .then(reg => console.log('Service Worker registered:', reg))
     .catch(err => console.log('Service Worker registration failed:', err));
 }
