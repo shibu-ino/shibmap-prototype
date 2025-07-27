@@ -131,6 +131,14 @@
       .legend { font-size: 11px; }
       .popup-wrap { max-width: 210px; }
       .popup-img { height: 120px; }
+      #jsonInput {
+        position: relative !important;
+        width: 100% !important;
+        margin: 10px 0 !important;
+        top: auto !important;
+        left: auto !important;
+        transform: none !important;
+      }
     }
   </style>
 
@@ -149,6 +157,19 @@
   </div>
 
   <script>
+  /*
+  例:
+  [
+    {
+      "title": "彩虹邨（Choi Hung Estate）",
+      "coords": [22.333189, 114.211905],
+      "tags": ["香港", "バスケ"],
+      "note": "香港で見つけたawaバスケットコート",
+      "image": "images/choihung.jpg",
+      "link": "https://example.com"
+    }
+  ]
+  */
     // 追加：現在のマーカーを記録
     let currentMarkers = [];
     let currentLocationMarker = null;
@@ -268,8 +289,9 @@ function loadCustomMarkers() {
     addedMarkerSet.clear();
 
     items.forEach((item, index) => {
-      if (!item.coords || item.coords.length !== 2) {
-        throw new Error(`スポット ${index + 1} にcoordsが不正です`);
+      // coords形式のみ対応。他の形式（lat, lng等）は非対応
+      if (!item.coords || !Array.isArray(item.coords) || item.coords.length !== 2) {
+        throw new Error(`スポット ${index + 1} にcoordsが不正です（coords形式のみ対応。他の形式（lat, lng等）は非対応です）`);
       }
 
       const markerKey = `${item.coords[0]},${item.coords[1]}`;
