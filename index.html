@@ -358,12 +358,20 @@ if ('serviceWorker' in navigator) {
     .catch(err => console.log('Service Worker registration failed:', err));
 }
 
+
 // 新規追加：jsonInputのフォーカス時に画面をスクロールして入力欄を見やすくする
 const input = document.getElementById('jsonInput');
 input.addEventListener('focus', () => {
   setTimeout(() => {
     window.scrollTo(0, 0);
   }, 300);
+});
+
+// iOS Safari対策：画面リサイズ時にmap.invalidateSize()で再描画
+window.addEventListener('resize', () => {
+  if (map) {
+    map.invalidateSize();
+  }
 });
 
   </script>
