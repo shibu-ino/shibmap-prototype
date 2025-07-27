@@ -1,9 +1,9 @@
-// © 2025 Sibmap Project
+// © 2025 Shibmap Project
 // Licensed under CC BY-NC 4.0
 // Service Worker with runtime tile caching for Carto Light
 
-const APP_CACHE = 'sibmap-v3';            // bump cache to force update
-const TILE_CACHE = 'sibmap-tiles-v1';     // runtime cache for basemap tiles
+const APP_CACHE = 'Shibmap-v3';            // bump cache to force update
+const TILE_CACHE = 'Shibmap-tiles-v1';     // runtime cache for basemap tiles
 
 const APP_SHELL = [
   './',

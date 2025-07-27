@@ -1,6 +1,6 @@
 {
-  "name": "Sibmap",
-  "short_name": "Sibmap",
+  "name": "Shibmap",
+  "short_name": "Shibmap",
   "start_url": "./index.html",
   "display": "standalone",
   "background_color": "#f9f5eb",

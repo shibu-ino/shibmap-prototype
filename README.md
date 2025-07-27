@@ -1,9 +1,9 @@
-# sibmap-prototype
-Sibmap PWA test
+# Shibmap-prototype
+Shibmap PWA test
 
-# Sibmap - Prototype
+# Shibmap - Prototype
 
-This is the prototype version of Sibmap, a PWA (Progressive Web App) designed for displaying custom travel spots on a map using JSON data.
+This is the prototype version of Shibmap, a PWA (Progressive Web App) designed for displaying custom travel spots on a map using JSON data.
 
 ## Features
 

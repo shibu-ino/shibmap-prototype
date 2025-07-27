@@ -3,13 +3,13 @@
 <head>
 
   <!--
-    Sibmap (c) 2025 katagirigouta
+    Shibmap (c) 2025 katagirigouta
     License: CC BY-NC 4.0 International (https://creativecommons.org/licenses/by-nc/4.0/)
     This project is licensed for non-commercial use only.
   -->
 
   <meta charset="UTF-8" />
-  <title>Sibmap</title>
+  <title>Shibmap</title>
   <link rel="manifest" href="manifest.json" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
@@ -260,7 +260,7 @@ function loadCustomMarkers() {
   try {
     const items = JSON.parse(input);
     console.log(items);
-    localStorage.setItem('sibmapData', input);
+    localStorage.setItem('ShibmapData', input);
 
     // 既存マーカー削除
     currentMarkers.forEach(marker => map.removeLayer(marker));
@@ -312,13 +312,13 @@ function clearMarkers() {
   currentMarkers.forEach(marker => map.removeLayer(marker));
   currentMarkers = [];
   addedMarkerSet.clear();
-  localStorage.removeItem('sibmapData');
+  localStorage.removeItem('ShibmapData');
   document.getElementById('jsonInput').value = '';
   console.log("地図と保存データをクリアしました");
 }
 
   window.addEventListener('load', () => {
-    const saved = localStorage.getItem('sibmapData');
+    const saved = localStorage.getItem('ShibmapData');
     if (saved) {
       document.getElementById('jsonInput').value = saved;
       loadCustomMarkers();
