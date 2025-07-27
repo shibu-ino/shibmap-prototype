@@ -37,7 +37,7 @@
       font-family: 'Noto Serif JP','EB Garamond',serif;
       background: var(--bg);
     }
-    #map { height: 100vh; }
+    #map { height: calc(var(--vh, 1vh) * 100); }
 
     .leaflet-container {
       background: #e9e4da;
@@ -146,10 +146,16 @@
       margin-bottom: 1em;
     }
   </style>
-
-
-
-
+  <script>
+    // iOS Safariキーボード表示による画面の余白対策
+    function setRealVh() {
+      let vh = window.innerHeight * 0.01;
+      document.documentElement.style.setProperty('--vh', `${vh}px`);
+    }
+    window.addEventListener('resize', setRealVh);
+    window.addEventListener('orientationchange', setRealVh);
+    setRealVh();
+  </script>
 </head>
 <body>
   <div id="map"></div>
@@ -369,11 +375,7 @@ input.addEventListener('focus', () => {
 });
 
 // iOS Safari対策：画面リサイズ時にmap.invalidateSize()で再描画
-window.addEventListener('resize', () => {
-  if (map) {
-    map.invalidateSize();
-  }
-});
+// ※ map.invalidateSize() 呼び出しは --vh 設定スクリプトにより不要となったため削除
 
   </script>
 </body>
