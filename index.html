@@ -151,6 +151,9 @@
     function setRealVh() {
       let vh = window.innerHeight * 0.01;
       document.documentElement.style.setProperty('--vh', `${vh}px`);
+      if (typeof map !== 'undefined') {
+        map.invalidateSize(); // iOSキーボード出現による再描画
+      }
     }
     window.addEventListener('resize', setRealVh);
     window.addEventListener('orientationchange', setRealVh);
