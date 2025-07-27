@@ -359,11 +359,12 @@ if ('serviceWorker' in navigator) {
 }
 
 
-// 新規追加：jsonInputのフォーカス時に画面をスクロールして入力欄を見やすくする
+// 新規追加：jsonInputのフォーカス時に画面をスクロールして入力欄を見やすくする（iOS Safari対応）
 const input = document.getElementById('jsonInput');
 input.addEventListener('focus', () => {
   setTimeout(() => {
-    window.scrollTo(0, 0);
+    const y = input.getBoundingClientRect().top + window.scrollY - 30;
+    window.scrollTo({ top: y, behavior: 'smooth' });
   }, 300);
 });
 
