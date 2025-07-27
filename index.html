@@ -11,7 +11,7 @@
   <meta charset="UTF-8" />
   <title>Shibmap</title>
   <link rel="manifest" href="manifest.json" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
 
   <!-- Leaflet -->
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
@@ -46,6 +46,21 @@
       height: calc(var(--vh, 1vh) * 100);
       width: 100%;
     }
+
+    /* Prefer dynamic viewport height on supported browsers */
+    @supports (height: 100dvh) {
+      #map { height: 100dvh; }
+    }
+
+    /* iOS: prevent auto-zoom on focused form controls */
+    input, textarea, select, button {
+      font-size: 16px;
+      -webkit-text-size-adjust: 100%;
+    }
+
+    /* iOS: respect safe areas and reduce bounce showing white gaps */
+    body { padding-top: env(safe-area-inset-top); }
+    html, body { overscroll-behavior: none; }
 
     .leaflet-container {
       background: #e9e4da;
@@ -160,6 +175,7 @@
       margin-bottom: 1em;
       width: 100%;
       box-sizing: border-box;
+      font-size: 16px;
     }
 
     textarea {
