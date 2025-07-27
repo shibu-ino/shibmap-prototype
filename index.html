@@ -380,7 +380,7 @@ function loadCustomMarkers() {
       const popupHTML = `
         <div class="popup-wrap">
           <img src="${img}" alt="${title}" class="popup-img"
-               onerror="this.onerror=null;this.src='${FALLBACK_IMG}';">
+               onerror="this.onerror=null;this.src='${FALLBACK_IMG}'; this.classList.add('fallback-img');">
           <h2 class="popup-title">${title}</h2>
           <div class="tags">${tags}</div>
           <div class="desc">${body}</div>
@@ -451,5 +451,7 @@ window.addEventListener('pageshow', (event) => {
 
   </script>
 </body>
+  <!-- Shibmap UI finalized as of July 27, 2025. Ready for PWA deployment. -->
+  <!-- 修正：画像表示がうまくいかない問題に対応するため、画像のonerrorハンドラでプレースホルダー画像へ切り替えるように明示化 -->
   <!-- 本システムは非営利目的での使用に限ります。CC BY-NCライセンス適用中 -->
 </html>
