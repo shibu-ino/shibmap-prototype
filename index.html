@@ -33,17 +33,19 @@
       --link: #2F80ED;
     }
     html, body {
-      margin:0; padding:0; height:100%;
+      margin: 0;
+      padding: 0;
+      height: 100%;
+      overflow: hidden;
       font-family: 'Noto Serif JP','EB Garamond',serif;
       background: var(--bg);
     }
     #map {
-      position: fixed;
+      position: absolute;
       top: 0;
       left: 0;
-      right: 0;
-      bottom: 0;
-      height: 100vh;
+      height: 100%;
+      width: 100%;
     }
 
     .leaflet-container {
@@ -269,10 +271,11 @@
     let currentLocationMarker = null;
     // ---- 基本マップ ----
     const map = L.map('map', {
-      minZoom: 4,
-      maxZoom: 19,
-      scrollWheelZoom: true
-    }).setView([35.170, 136.907], 14);
+      minZoom: 1,
+      maxZoom: 18,
+      worldCopyJump: true,
+      zoomSnap: 0.1
+    }).setView([34.4273, 135.244], 3);
 
     map.on('popupopen', function () {
       window.scrollTo({ top: 0, behavior: 'smooth' });
