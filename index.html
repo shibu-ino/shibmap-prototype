@@ -202,6 +202,18 @@
       overflow-x: auto;
       padding-top: 4px;
     }
+
+    #formContainer {
+      position: fixed;
+      top: 10px;
+      left: 10px;
+      right: 10px;
+      z-index: 999;
+      background-color: white;
+      padding: 10px;
+      border-radius: 10px;
+      box-shadow: 0 0 5px rgba(0,0,0,0.2);
+    }
   </style>
   <script>
     // iOS Safariキーボード表示による画面の余白対策
@@ -219,14 +231,16 @@
 </head>
 <body>
   <div id="map"></div>
-  <div id="inputPanel">
-    <textarea id="jsonInput" rows="6" placeholder="ここにJSONデータを貼り付け"></textarea>
-    <div class="button-row">
-      <button id="clearButton" onclick="clearMarkers()">地図をクリア</button>
-      <button id="loadButton" onclick="loadCustomMarkers()">地図に表示</button>
-      <button id="locateBtn" onclick="locateNow(true)">現在地</button>
+  <div id="formContainer">
+    <div id="inputPanel">
+      <textarea id="jsonInput" rows="6" placeholder="ここにJSONデータを貼り付け"></textarea>
+      <div class="button-row">
+        <button id="clearButton" onclick="clearMarkers()">地図をクリア</button>
+        <button id="loadButton" onclick="loadCustomMarkers()">地図に表示</button>
+        <button id="locateBtn" onclick="locateNow(true)">現在地</button>
+      </div>
+      <span id="locStatus"></span>
     </div>
-    <span id="locStatus"></span>
   </div>
 
   <script>
@@ -252,6 +266,10 @@
       maxZoom: 19,
       scrollWheelZoom: true
     }).setView([35.170, 136.907], 14);
+
+    map.on('popupopen', function () {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    });
 
     // ---- 現在地表示 ----
     function locateNow(fromUser = false) {
