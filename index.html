@@ -522,6 +522,7 @@
       transform: translateY(110%);
     }
     #inputPanel.collapsed { pointer-events: none; }
+    #inputPanel.is-collapsed { transform: translateY(110%); pointer-events:none; }
     #panelToggleFab {
       position: fixed;
       right: 12px;
@@ -540,6 +541,52 @@
     @supports (env(safe-area-inset-bottom)) {
       #panelToggleFab { bottom: calc(12px + env(safe-area-inset-bottom)); }
     }
+
+    /* === Class-based components (migration layer) === */
+    :root {
+      --btn-size-lg: 56px;
+      --btn-font-lg: 14px;
+      --safe-pad-b: calc(10px + env(safe-area-inset-bottom));
+    }
+    .toolbar { display:flex; gap:8px; align-items:center; }
+    .toolbar.bottom {
+      display: flex;
+      flex-wrap: nowrap;            /* 一列保持（狭い画面はスクロール） */
+      align-items: center;
+      justify-content: flex-start;  /* 左寄せ（右端に押し出し用のautoが効く） */
+      gap: 8px;
+      padding: 4px 8px calc(6px + env(safe-area-inset-bottom)); /* 上下の余白を減らす */
+      overflow-x: auto;             /* 狭い画面で横スクロール */
+    }
+    .btn {
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+      gap:6px;
+      border-radius:12px;
+      border:1px solid rgba(0,0,0,0.08);
+      background:#fff;
+      color:var(--accent);
+      padding: 8px 16px; /* 上下の余白を減らしてコンパクト化 */
+      font-size:var(--btn-font-lg);
+      line-height:1;
+      cursor:pointer;
+    }
+    .btn:hover { background:#f6f4ef; }
+    .btn--icon { width:var(--btn-size-lg); height:var(--btn-size-lg); padding:0; border-radius:999px; }
+    .btn--fab { width:var(--btn-size-lg); height:var(--btn-size-lg); border-radius:999px; box-shadow:0 2px 6px rgba(0,0,0,0.2); }
+
+
+    /* Collapsed state (class-based modifier) */
+    .is-collapsed { transform: translateY(110%); pointer-events:none; }
+
+    @media (max-width: 430px) {
+      .toolbar.bottom { padding-bottom: var(--safe-pad-b); }
+      /* If any min-width/min-height for .btn is present in mobile, remove/comment it out */
+      /* .btn { min-width: unset !important; min-height: unset !important; } */
+    }
+
+    #weekPanel.is-collapsed { transform: translateY(110%); pointer-events:none; }
   </style>
   <script>
     // iOS Safariキーボード表示による画面の余白対策
@@ -588,11 +635,13 @@ function isKoreaStrict(lat, lng){
       if (!panel || !fab) return;
       if (collapsed) {
         panel.classList.add('collapsed');
+        panel.classList.add('is-collapsed');
         fab.classList.add('show');
         fab.setAttribute('aria-expanded', 'false');
         localStorage.setItem('ShibmapPanelCollapsed', '1');
       } else {
         panel.classList.remove('collapsed');
+        panel.classList.remove('is-collapsed');
         fab.classList.remove('show');
         fab.setAttribute('aria-expanded', 'true');
         localStorage.setItem('ShibmapPanelCollapsed', '0');
@@ -619,14 +668,10 @@ function isKoreaStrict(lat, lng){
   <div id="cardStrip" style="display:none;"></div>
   <div id="inputPanel">
       <textarea id="jsonInput" rows="6" placeholder="ここにJSONデータを貼り付け"></textarea>
-      <div class="button-row">
-        <button id="clearButton" onclick="clearMarkers()">地図をクリア</button>
-        <button id="loadButton" onclick="loadCustomMarkers()">地図に表示</button>
-        <button id="locateBtn" onclick="locateNow(true)">現在地</button>
-        <button id="collapseBtn" class="icon-btn" onclick="togglePanel(true)" title="入力パネルを隠す">         
-     <svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M7.41 8.59 12 13.17l4.59-4.58L18 10l-6 6-6-6z"/></svg>
-        </button>
-
+      <div class="button-row toolbar bottom">
+        <button id="clearButton" class="btn" onclick="clearMarkers()">地図をクリア</button>
+        <button id="loadButton" class="btn" onclick="loadCustomMarkers()">地図に表示</button>
+        <button id="locateBtn" class="btn" onclick="locateNow(true)">現在地</button>
         <label style="margin-left:auto;display:flex;align-items:center;gap:6px;font-size:12px;color:#555">
           集約単位
           <select id="aggregateMode" onchange="loadCustomMarkers()" style="font-size:12px;border:1px solid #ccc;border-radius:6px;padding:2px 6px;background:#fff">
@@ -635,11 +680,11 @@ function isKoreaStrict(lat, lng){
             <option value="none" selected>集約なし（個別表示）</option>
           </select>
         </label>
-
+        <button id="collapseBtn" class="btn" onclick="togglePanel(true)" title="入力パネルを隠す">↓</button>
       </div>
       <span id="locStatus"></span>
     </div>
-<button id="panelToggleFab" onclick="togglePanel(false)" aria-label="入力を開く" title="入力を開く">
+<button id="panelToggleFab" class="btn btn--fab" onclick="togglePanel(false)" aria-label="入力を開く" title="入力を開く">
   <svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M7.41 15.41 12 10.83l4.59 4.58L18 14l-6-6-6 6z"/></svg>
 </button>
 
