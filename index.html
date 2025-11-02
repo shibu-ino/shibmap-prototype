@@ -680,6 +680,7 @@ function isKoreaStrict(lat, lng){
             <option value="none" selected>集約なし（個別表示）</option>
           </select>
         </label>
+        <button id="hardReloadBtn" class="btn" onclick="hardResetCaches()" title="キャッシュとSWをクリアして再読み込み">強制リロード</button>
         <button id="collapseBtn" class="btn" onclick="togglePanel(true)" title="入力パネルを隠す">↓</button>
       </div>
       <span id="locStatus"></span>
@@ -1446,6 +1447,33 @@ function clearMarkers() {
   console.log('地図と保存データをクリアしました');
 }
 
+// 強制キャッシュクリア＋再読み込み
+async function hardResetCaches(){
+  try{
+    // clear localStorage for this app
+    localStorage.removeItem('ShibmapData');
+    localStorage.removeItem('ShibmapPanelCollapsed');
+
+    // clear Cache Storage
+    if ('caches' in window) {
+      const keys = await caches.keys();
+      await Promise.all(keys.map(k => caches.delete(k)));
+    }
+
+    // unregister all service workers for this origin
+    if (navigator.serviceWorker && navigator.serviceWorker.getRegistrations) {
+      const regs = await navigator.serviceWorker.getRegistrations();
+      await Promise.all(regs.map(r => r.unregister()));
+    }
+
+    // reload bypassing cache
+    location.reload(true);
+  }catch(e){
+    console.warn('hardResetCaches failed:', e);
+    location.reload();
+  }
+}
+
 window.addEventListener('load', () => {
   // 復元：入力パネルの表示状態
   if (localStorage.getItem('ShibmapPanelCollapsed') === '1') {
@@ -1463,8 +1491,17 @@ window.addEventListener('load', () => {
 });
 
 if ('serviceWorker' in navigator && (location.protocol === 'https:' || location.hostname === 'localhost' || location.hostname === '127.0.0.1')) {
-  navigator.serviceWorker.register('service-worker.js?v=20250727b')
-    .then(reg => console.log('Service Worker registered:', reg))
+  // bump version to force update on GitHub Pages
+  navigator.serviceWorker.register('service-worker.js?v=20251102a', { updateViaCache: 'none' })
+    .then(async reg => {
+      console.log('Service Worker registered (forced v20251102a):', reg);
+      try {
+        // Proactively check for updates right after registration
+        if (reg.update) await reg.update();
+      } catch (e) {
+        console.warn('SW update() failed:', e);
+      }
+    })
     .catch(err => console.log('Service Worker registration failed:', err));
 }
 
