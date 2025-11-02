@@ -907,18 +907,13 @@ function buildAggregatePopupHTML(groupItems) {
     return `<div class="popup-wrap"><div class="popup-body"><ul style="margin:6px 0 6px 18px; padding:0">${list}</ul></div></div>`;
   }
   const tiles = medias.slice(0, 12).map(m => {
-    const u = m.url || '';
+    const u = (m && m.url) ? m.url : '';
+    const p = (m && m.poster) ? m.poster : '';
     if (!u) return '';
-    if (/\.(mp4|m4v|webm|ogv|ogg|mov)(\?.*)?$/i.test(u)) {
-      const src = encodeURI(u);
-      return `<video class="popup-video" src="${escapeHTML(src)}" autoplay muted loop playsinline webkit-playsinline preload="metadata" onerror="videoFallback(this)" style="width:100%;border-radius:8px"></video>`;
-    }
-    if (/\.(apng|avif|gif|jpe?g|png|webp)(\?.*)?$/i.test(u)) {
-      const src = encodeURI(u);
-      return `<img class="popup-img" src="${escapeHTML(src)}" alt="" style="width:100%;border-radius:8px" onerror="this.onerror=null;this.src='${FALLBACK_IMG}'">`;
-    }
-    return '';
-  }).filter(Boolean).map(h => `<div class="media-grid-item">${h}</div>`).join('');
+    // Reuse single-media builder so HTTPS+/Users/... paths show the picker UI
+    const inner = buildSingleMedia(u, p);
+    return inner ? `<div class="media-grid-item">${inner}</div>` : '';
+  }).filter(Boolean).join('');
   return `
   <style>
     .media-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:6px; padding:6px; border-radius:12px; overflow:hidden; }
@@ -1135,6 +1130,120 @@ function buildAggregatePopupHTML(groupItems) {
 
     const FALLBACK_IMG = 'images/placeholder.jpg'; // 必要なら配置
 
+    // --- Globalized: single media builder (used by both aggregate and per-item popups) ---
+    function buildSingleMedia(url, poster='') {
+      const raw = (url || '').toString().trim();
+      const rawPoster = (poster || '').toString().trim();
+      if (!raw) return '';
+
+      function normalizeURL(u) {
+        if (location.protocol === 'file:' && /^\/Users\//.test(u)) {
+          u = 'file://' + u;
+        }
+        return encodeURI(u);
+      }
+
+      // Guard: macOS absolute path when served on HTTPS -> present local picker UI
+      if (location.protocol !== 'file:' && typeof url === 'string' && /^\/Users\//.test(url)) {
+        const pickId = 'pick_' + Math.random().toString(36).slice(2);
+        setTimeout(() => {
+          const btn = document.getElementById(pickId);
+          if (!btn) return;
+          btn.addEventListener('click', async () => {
+            try {
+              let file = null;
+              if (window.showOpenFilePicker) {
+                const [handle] = await window.showOpenFilePicker({
+                  multiple: false,
+                  types: [{
+                    description: 'Media',
+                    accept: {
+                      'video/*': ['.mp4', '.mov', '.m4v', '.webm', '.ogv'],
+                      'image/*': ['.jpg', '.jpeg', '.png', '.webp', '.gif', '.avif']
+                    }
+                  }]
+                });
+                file = await handle.getFile();
+              } else {
+                const inp = document.createElement('input');
+                inp.type = 'file';
+                inp.accept = 'video/*,image/*';
+                inp.addEventListener('change', () => {
+                  if (inp.files && inp.files[0]) replaceWithBlob(inp.files[0]);
+                }, { once: true });
+                inp.click();
+                return;
+              }
+              if (file) replaceWithBlob(file);
+            } catch (e) {
+              console.warn('Local file pick cancelled/failed:', e);
+            }
+            function replaceWithBlob(file) {
+              try {
+                const blobURL = URL.createObjectURL(file);
+                const container = document.getElementById(pickId)?.closest('.local-missing');
+                if (container) container.innerHTML = buildSingleMedia(blobURL, '');
+              } catch (err) {
+                console.error('Failed to create blob URL:', err);
+              }
+            }
+          }, { once: true });
+        }, 0);
+        return `
+          &lt;div class="popup-wrap media-only local-missing" style="padding:8px 10px;"&gt;
+            &lt;div style="font-size:12px;color:#555; margin-bottom:6px;"&gt;
+              この地点のメディアはローカルパスを参照しており、Web上では直接開けません。デバイス内の該当ファイルを選ぶと表示できます。
+            &lt;/div&gt;
+            &lt;button id="${pickId}" class="btn" style="padding:6px 10px;border-radius:8px;border:1px solid #ddd;background:#fff;cursor:pointer;"&gt;このデバイスから選ぶ&lt;/button&gt;
+          &lt;/div&gt;`;
+      }
+
+      const srcFixed = normalizeURL(raw);
+      const posterFixed = rawPoster ? normalizeURL(rawPoster) : '';
+      const srcAttr = escapeHTML(srcFixed);
+      const posterAttr = posterFixed ? ` poster="${escapeHTML(posterFixed)}"` : '';
+
+      // YouTube
+      {
+        const yt = srcFixed.match(/(?:youtu\.be\/|youtube(?:-nocookie)?\.com\/(?:watch\?v=|embed\/))([A-Za-z0-9_-]{11})/);
+        if (yt) {
+          const id = yt[1];
+          const src = `https://www.youtube-nocookie.com/embed/${id}?rel=0&amp;modestbranding=1&amp;playsinline=1&amp;autoplay=1&amp;mute=1&amp;controls=1`;
+          return `<div class="popup-iframe-wrap"><iframe src="${srcAttr.replace(srcFixed, src)}" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen loading="lazy"></iframe></div>`;
+        }
+      }
+
+      // Vimeo
+      {
+        const vm = srcFixed.match(/vimeo\.com\/(?:video\/)?(\d+)/);
+        if (vm) {
+          const id = vm[1];
+          const src = `https://player.vimeo.com/video/${id}?autoplay=1&amp;muted=1&amp;playsinline=1`;
+          return `<div class="popup-iframe-wrap"><iframe src="${escapeHTML(src)}" allow="autoplay; fullscreen; picture-in-picture" allowfullscreen loading="lazy"></iframe></div>`;
+        }
+      }
+
+      // Direct video
+      if (/\.(mp4|m4v|webm|ogv|ogg|mov)(\?.*)?$/i.test(srcFixed)) {
+        const ext = srcFixed.split('.').pop().toLowerCase().split('?')[0];
+        const mimeMap = { mp4:'video/mp4', m4v:'video/mp4', webm:'video/webm', ogv:'video/ogg', ogg:'video/ogg', mov:'video/quicktime' };
+        const mime = mimeMap[ext] || 'video/mp4';
+        return `<video class="popup-video" src="${srcAttr}" autoplay muted loop playsinline webkit-playsinline controls preload="metadata"${posterAttr}
+          onloadedmetadata="this.style.aspectRatio=(this.videoWidth + '/' + this.videoHeight)"
+          onerror="videoFallback(this)">
+          <source src="${srcAttr}" type="${mime}">
+        </video>`;
+      }
+
+      // Image
+      if (/\.(apng|avif|gif|jpe?g|png|webp)(\?.*)?$/i.test(srcFixed)) {
+        return `<img src="${srcAttr}" alt="" class="popup-img" onload="this.style.aspectRatio=(this.naturalWidth + '/' + this.naturalHeight)" onerror="this.onerror=null;this.src='${FALLBACK_IMG}'; this.classList.add('fallback-img');">`;
+      }
+
+      // Fallback link
+      return `<a class="popup-link" href="${srcAttr}" target="_blank" rel="noopener">メディアを開く</a>`;
+    }
+
     // 動画が再生できない（コーデック/アクセス権など）場合のフォールバック
     function videoFallback(videoEl){
       try{
@@ -1181,127 +1290,6 @@ function buildAggregatePopupHTML(groupItems) {
     function buildMediaHTML(item = {}) {
       const escape = (s='') => escapeHTML(s);
       const fallbackImg = FALLBACK_IMG;
-
-      // URL → メディア要素HTML（単体）
-      function buildSingleMedia(url, poster='') {
-        const raw = (url || '').toString().trim();
-        const rawPoster = (poster || '').toString().trim();
-        if (!raw) return '';
-
-        // ---- 正規化：ロジックは “生のURL文字列” で行い、最後に HTML エスケープ ----
-        function normalizeURL(u) {
-          // ローカル絶対パスは file:/// を付与
-          if (location.protocol === 'file:' && /^\/Users\//.test(u)) {
-            u = 'file://' + u;
-          }
-          // 日本語/スペースなどを URL エンコード（スキームや ://, ?, &, = は保持）
-          return encodeURI(u);
-        }
-
-        // === Local absolute path guard (e.g., "/Users/...") when running on HTTPS/GitHub Pages ===
-        // If the source points to a macOS local absolute path while the page is served over HTTPS,
-        // we cannot fetch it due to browser security. Provide a file picker to let the user select
-        // the local media file and then play it via a Blob URL.
-        if (location.protocol !== 'file:' && typeof url === 'string' && /^\/Users\//.test(url)) {
-          const pickId = 'pick_' + Math.random().toString(36).slice(2);
-          // Bind click after this HTML is attached
-          setTimeout(() => {
-            const btn = document.getElementById(pickId);
-            if (!btn) return;
-            btn.addEventListener('click', async () => {
-              try {
-                let file = null;
-                if (window.showOpenFilePicker) {
-                  const [handle] = await window.showOpenFilePicker({
-                    multiple: false,
-                    types: [{
-                      description: 'Media',
-                      accept: {
-                        'video/*': ['.mp4', '.mov', '.m4v', '.webm', '.ogv'],
-                        'image/*': ['.jpg', '.jpeg', '.png', '.webp', '.gif', '.avif']
-                      }
-                    }]
-                  });
-                  file = await handle.getFile();
-                } else {
-                  const inp = document.createElement('input');
-                  inp.type = 'file';
-                  inp.accept = 'video/*,image/*';
-                  inp.addEventListener('change', () => {
-                    if (inp.files && inp.files[0]) replaceWithBlob(inp.files[0]);
-                  }, { once: true });
-                  inp.click();
-                  return;
-                }
-                if (file) replaceWithBlob(file);
-              } catch (e) {
-                console.warn('Local file pick cancelled/failed:', e);
-              }
-              function replaceWithBlob(file) {
-                try {
-                  const blobURL = URL.createObjectURL(file);
-                  const container = document.getElementById(pickId)?.closest('.local-missing');
-                  if (container) container.innerHTML = buildSingleMedia(blobURL, '');
-                } catch (err) {
-                  console.error('Failed to create blob URL:', err);
-                }
-              }
-            }, { once: true });
-          }, 0);
-          return `
-            &lt;div class="popup-wrap media-only local-missing" style="padding:8px 10px;"&gt;
-              &lt;div style="font-size:12px;color:#555; margin-bottom:6px;"&gt;
-                この地点のメディアはローカルパスを参照しており、Web上では直接開けません。デバイス内の該当ファイルを選ぶと表示できます。
-              &lt;/div&gt;
-              &lt;button id="${pickId}" class="btn" style="padding:6px 10px;border-radius:8px;border:1px solid #ddd;background:#fff;cursor:pointer;"&gt;このデバイスから選ぶ&lt;/button&gt;
-            &lt;/div&gt;`;
-        }
-
-        const srcFixed = normalizeURL(raw);
-        const posterFixed = rawPoster ? normalizeURL(rawPoster) : '';
-        const srcAttr = escapeHTML(srcFixed);
-        const posterAttr = posterFixed ? ` poster="${escapeHTML(posterFixed)}"` : '';
-
-        // YouTube
-        {
-          const yt = srcFixed.match(/(?:youtu\.be\/|youtube(?:-nocookie)?\.com\/(?:watch\?v=|embed\/))([A-Za-z0-9_-]{11})/);
-          if (yt) {
-            const id = yt[1];
-            const src = `https://www.youtube-nocookie.com/embed/${id}?rel=0&modestbranding=1&playsinline=1&autoplay=1&mute=1&controls=1`;
-            return `<div class="popup-iframe-wrap"><iframe src="${escapeHTML(src)}" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen loading="lazy"></iframe></div>`;
-          }
-        }
-
-        // Vimeo
-        {
-          const vm = srcFixed.match(/vimeo\.com\/(?:video\/)?(\d+)/);
-          if (vm) {
-            const id = vm[1];
-            const src = `https://player.vimeo.com/video/${id}?autoplay=1&muted=1&playsinline=1`;
-            return `<div class="popup-iframe-wrap"><iframe src="${escapeHTML(src)}" allow="autoplay; fullscreen; picture-in-picture" allowfullscreen loading="lazy"></iframe></div>`;
-          }
-        }
-
-        // 直接動画（mp4/m4v/webm/ogv/ogg/mov）
-        if (/\.(mp4|m4v|webm|ogv|ogg|mov)(\?.*)?$/i.test(srcFixed)) {
-          const ext = srcFixed.split('.').pop().toLowerCase().split('?')[0];
-          const mimeMap = { mp4:'video/mp4', m4v:'video/mp4', webm:'video/webm', ogv:'video/ogg', ogg:'video/ogg', mov:'video/quicktime' };
-          const mime = mimeMap[ext] || 'video/mp4';
-          return `<video class="popup-video" src="${srcAttr}" autoplay muted loop playsinline webkit-playsinline controls preload="metadata"${posterAttr}
-            onloadedmetadata="this.style.aspectRatio=(this.videoWidth + '/' + this.videoHeight)"
-            onerror="videoFallback(this)">
-            <source src="${srcAttr}" type="${mime}">
-          </video>`;
-        }
-
-        // 画像
-        if (/\.(apng|avif|gif|jpe?g|png|webp)(\?.*)?$/i.test(srcFixed)) {
-          return `<img src="${srcAttr}" alt="" class="popup-img" onload="this.style.aspectRatio=(this.naturalWidth + '/' + this.naturalHeight)" onerror="this.onerror=null;this.src='${fallbackImg}'; this.classList.add('fallback-img');">`;
-        }
-
-        // 未判定 → リンク（※ダウンロード誘導はしない）
-        return `<a class="popup-link" href="${srcAttr}" target="_blank" rel="noopener">メディアを開く</a>`;
-      }
 
       // ギャラリー優先
       const gallery = Array.isArray(item.gallery) ? item.gallery : null;
