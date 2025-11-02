@@ -1198,6 +1198,65 @@ function buildAggregatePopupHTML(groupItems) {
           return encodeURI(u);
         }
 
+        // === Local absolute path guard (e.g., "/Users/...") when running on HTTPS/GitHub Pages ===
+        // If the source points to a macOS local absolute path while the page is served over HTTPS,
+        // we cannot fetch it due to browser security. Provide a file picker to let the user select
+        // the local media file and then play it via a Blob URL.
+        if (location.protocol !== 'file:' && typeof url === 'string' && /^\/Users\//.test(url)) {
+          const pickId = 'pick_' + Math.random().toString(36).slice(2);
+          // Bind click after this HTML is attached
+          setTimeout(() => {
+            const btn = document.getElementById(pickId);
+            if (!btn) return;
+            btn.addEventListener('click', async () => {
+              try {
+                let file = null;
+                if (window.showOpenFilePicker) {
+                  const [handle] = await window.showOpenFilePicker({
+                    multiple: false,
+                    types: [{
+                      description: 'Media',
+                      accept: {
+                        'video/*': ['.mp4', '.mov', '.m4v', '.webm', '.ogv'],
+                        'image/*': ['.jpg', '.jpeg', '.png', '.webp', '.gif', '.avif']
+                      }
+                    }]
+                  });
+                  file = await handle.getFile();
+                } else {
+                  const inp = document.createElement('input');
+                  inp.type = 'file';
+                  inp.accept = 'video/*,image/*';
+                  inp.addEventListener('change', () => {
+                    if (inp.files && inp.files[0]) replaceWithBlob(inp.files[0]);
+                  }, { once: true });
+                  inp.click();
+                  return;
+                }
+                if (file) replaceWithBlob(file);
+              } catch (e) {
+                console.warn('Local file pick cancelled/failed:', e);
+              }
+              function replaceWithBlob(file) {
+                try {
+                  const blobURL = URL.createObjectURL(file);
+                  const container = document.getElementById(pickId)?.closest('.local-missing');
+                  if (container) container.innerHTML = buildSingleMedia(blobURL, '');
+                } catch (err) {
+                  console.error('Failed to create blob URL:', err);
+                }
+              }
+            }, { once: true });
+          }, 0);
+          return `
+            &lt;div class="popup-wrap media-only local-missing" style="padding:8px 10px;"&gt;
+              &lt;div style="font-size:12px;color:#555; margin-bottom:6px;"&gt;
+                この地点のメディアはローカルパスを参照しており、Web上では直接開けません。デバイス内の該当ファイルを選ぶと表示できます。
+              &lt;/div&gt;
+              &lt;button id="${pickId}" class="btn" style="padding:6px 10px;border-radius:8px;border:1px solid #ddd;background:#fff;cursor:pointer;"&gt;このデバイスから選ぶ&lt;/button&gt;
+            &lt;/div&gt;`;
+        }
+
         const srcFixed = normalizeURL(raw);
         const posterFixed = rawPoster ? normalizeURL(rawPoster) : '';
         const srcAttr = escapeHTML(srcFixed);
